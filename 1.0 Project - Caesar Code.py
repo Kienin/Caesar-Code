@@ -1,48 +1,58 @@
-# Caesar Cipher
-MAX_KEY_SIZE = 26
-def getMode():
-    while True:
-        print('Do you wish to encrypt or decrypt a message?')
-        mode = input().lower()
-        if mode in 'encrypt e decrypt d'.split():
-            return mode
-        else:
-            print('Enter either "encrypt" or "e" or "decrypt" or "d".')
-def getMessage():
-    print('Enter your message:')
-    return input()
+def caesar_cipher(text, shift):
+    """Encrypts or decrypts a message using the Caesar cipher.
 
-def getKey():
-    key = 0
-    while True:
-        print('Enter the key number (1-%s)' % (MAX_KEY_SIZE))
-        key = int(input())
-        if (key >= 1 and key <= MAX_KEY_SIZE):
-            return key
-def getTranslatedMessage(mode, message, key):
-    if mode[0] == 'd':
-        key = -key
-    translated = ''
-    for symbol in message:
-        if symbol.isalpha():
-            num = ord(symbol)
-            num += key
-            if symbol.isupper():
-                if num > ord('Z'):
-                    num -= 26
-                elif num < ord('A'):
-                    num += 26
-            elif symbol.islower():
-                if num > ord('z'):
-                    num -= 26
-                elif num < ord('a'):
-                    num += 26
-            translated += chr(num)
+    Args:
+        text: The text to be encrypted or decrypted.
+        shift: The number of positions to shift the characters.
+
+    Returns:
+        The encrypted or decrypted message.
+    """
+
+    result = ""
+    for char in text:
+        if char.isalpha():
+            # Calculate the shifted character code
+            shifted_char = ord(char) + shift
+
+            # Adjust for wrapping around the alphabet
+            if char.isupper():
+                if shifted_char > ord('Z'):
+                    shifted_char -= 26
+                elif shifted_char < ord('A'):
+                    shifted_char += 26
+            elif char.islower():
+                if shifted_char > ord('z'):
+                    shifted_char -= 26
+                elif shifted_char < ord('a'):
+                    shifted_char += 26
+
+            # Convert the shifted character code back to a character
+            result += chr(shifted_char)
         else:
-            translated += symbol
-    return translated
-mode = getMode()
-message = getMessage()
-key = getKey()
-print('Your translated text is:')
-print(getTranslatedMessage(mode, message, key))
+            result += char
+    return result
+
+def main():
+    while True:
+        mode = input("Do you want to encrypt or decrypt a message? (e/d): ").lower()
+        if mode not in ('e', 'd'):
+            print("Invalid mode. Please enter 'e' or 'd'.")
+            continue
+
+        text = input("Enter your message: ")
+        shift = int(input("Enter the shift amount (1-25): "))
+
+        if shift < 1 or shift > 25:
+            print("Invalid shift amount. Please enter a number between 1 and 25.")
+            continue
+
+        result = caesar_cipher(text, shift)
+        print("Result:", result)
+
+        again = input("Do you want to try again? (y/n): ").lower()
+        if again != 'y':
+            break
+
+if __name__ == "__main__":
+    main()
